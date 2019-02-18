@@ -1,0 +1,70 @@
+package ua.nure.dudka.practice5;
+
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
+import java.io.FileInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Part5 {
+    private static final String FILE_NAME = "part5.txt";
+    private static final int ROWS_NUMBER = 10;
+
+
+    public static void main(String[] args) {
+        try {
+            Files.delete(Paths.get(FILE_NAME));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        RandomAccessFile randomAccessFile;
+        try {
+            randomAccessFile = new RandomAccessFile(FILE_NAME, "rw");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        List<Thread> threads = new ArrayList<>();
+        for (int i = 0; i < ROWS_NUMBER; i++) {
+            threads.add(new WriteToFile(randomAccessFile, i));
+        }
+
+        for (int i = 0; i < threads.size(); i++) {
+            threads.get(i).start();
+        }
+
+        for (Thread runnable : threads) {
+            try {
+                runnable.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        try {
+            randomAccessFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        try (FileInputStream fileReader = new FileInputStream(FILE_NAME);
+             InputStreamReader inputStreamReader = new InputStreamReader(fileReader, "Cp1251");
+             BufferedReader reader = new BufferedReader(inputStreamReader)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}

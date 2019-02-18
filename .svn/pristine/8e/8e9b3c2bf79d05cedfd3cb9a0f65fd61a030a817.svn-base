@@ -1,0 +1,62 @@
+package ua.nure.dudka.practice5;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Part5 {
+    private static final String FILE_NAME = "part5.txt";
+    private static RandomAccessFile randomAccessFile;
+    private static final int ROWS_NUMBER = 10;
+    private static List<Thread> threads;
+
+
+    public static void main(String[] args) {
+        new File(FILE_NAME).delete();
+        threads = new ArrayList<>();
+
+        try {
+            randomAccessFile = new RandomAccessFile(FILE_NAME, "rw");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        for (int i = 0; i < ROWS_NUMBER; i++) {
+            threads.add(new WriteToFile(randomAccessFile, i));
+        }
+
+        for (Thread thread : threads) {
+            thread.start();
+        }
+
+        for (Thread runnable : threads) {
+            try {
+                runnable.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            randomAccessFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(new FileReader(FILE_NAME));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (scanner != null) {
+            while (scanner.hasNextLine()) {
+                System.out.println(scanner.nextLine());
+            }
+            scanner.close();
+        }
+    }
+}

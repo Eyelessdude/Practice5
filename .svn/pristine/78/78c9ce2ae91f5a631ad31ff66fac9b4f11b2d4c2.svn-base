@@ -1,0 +1,47 @@
+package ua.nure.dudka.practice5;
+
+public class Part1 {
+    private static void print() {
+        for (int i = 0; i < 4; i++) {
+            System.out.println(Thread.currentThread().getName());
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args)  {
+        Thread thread;
+
+        thread = new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                print();
+            }
+        };
+
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                print();
+            }
+        });
+
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}

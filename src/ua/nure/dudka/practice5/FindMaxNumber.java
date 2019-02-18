@@ -1,0 +1,20 @@
+package ua.nure.dudka.practice5;
+
+import static ua.nure.dudka.practice5.Part4.setMax;
+
+class FindMaxNumber implements Runnable {
+    private String input;
+    Thread thread;
+
+    FindMaxNumber(String input) {
+        this.input = input;
+        thread = new Thread(this);
+    }
+
+    @Override
+    public void run() {
+        int max = Part4.getStringMaxNumber(input);
+
+        setMax(max);
+    }
+}

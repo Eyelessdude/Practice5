@@ -1,0 +1,8 @@
+package ua.nure.dudka.practice5;
+
+public class Demo {
+    public static void main(String[] args) throws InterruptedException {
+        Part1.main(new String[] {});
+        Part2.main(new String[]{});
+    }
+}

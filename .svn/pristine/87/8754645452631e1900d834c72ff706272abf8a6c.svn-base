@@ -1,0 +1,112 @@
+package ua.nure.dudka.practice5;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Part4 {
+    private static final String FILE_NAME = "part4.txt";
+    private static int result = 0;
+
+    static synchronized void setMax(int max) {
+        if (max > result) {
+            result = max;
+        }
+    }
+
+    public static int findInCycle(String input) {
+        int max = 0;
+
+        Scanner scanner = new Scanner(input);
+        while (scanner.hasNextInt()) {
+            int temp = scanner.nextInt();
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if (temp > max) {
+                max = temp;
+            }
+
+
+        }
+        scanner.close();
+
+        return max;
+    }
+
+/*    public int findThreadMax(List<String> list) throws InterruptedException {
+        max = 0;
+
+
+        for (int i = 0; i < list.size(); i++) {
+            int finalI = i;
+
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    super.run();
+                    readNumbers(list, finalI);
+                }
+            };
+
+
+        }
+
+        return max;
+    }*/
+
+
+    private List<String> read() throws IOException {
+        List<String> list = new ArrayList<>();
+        Scanner scanner = new Scanner(new FileReader(FILE_NAME));
+
+        while (scanner.hasNextLine()) {
+            list.add(scanner.nextLine());
+        }
+        scanner.close();
+
+        return list;
+    }
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        int maxInCycle = 0;
+        long startTime;
+        long endTime;
+
+        List<RunnableImpl> runnables = new ArrayList<>();
+        Scanner scanner = new Scanner(new FileReader(FILE_NAME));
+
+        startTime = System.currentTimeMillis();
+        while (scanner.hasNextLine()) {
+            String input = scanner.nextLine();
+            RunnableImpl runnable = new RunnableImpl(input);
+            runnables.add(runnable);
+        }
+
+        for (RunnableImpl runnable : runnables) {
+            runnable.thread.join();
+        }
+        System.out.println(Part4.result);
+        endTime = System.currentTimeMillis();
+        System.out.println(endTime - startTime);
+
+        Scanner cycleScanner = new Scanner(new FileReader(FILE_NAME));
+        startTime = System.currentTimeMillis();
+        while (cycleScanner.hasNextLine()) {
+            String input = cycleScanner.nextLine();
+            int tempMax = findInCycle(input);
+            if (tempMax > maxInCycle) {
+                maxInCycle = tempMax;
+            }
+        }
+        System.out.println(maxInCycle);
+        endTime = System.currentTimeMillis();
+        System.out.println(endTime - startTime);
+    }
+}

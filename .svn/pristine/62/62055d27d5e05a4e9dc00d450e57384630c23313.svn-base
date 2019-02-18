@@ -1,0 +1,47 @@
+package ua.nure.dudka.practice5;
+
+public class Part3 {
+    int firstCounter;
+    int secondCounter;
+
+    public void thread() throws InterruptedException {
+        firstCounter = 0;
+        secondCounter = 0;
+        callThread();
+    }
+
+    private void callThread() throws InterruptedException {
+       Thread t = new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                for (int i = 0; i < 5; i++) {
+                    System.out.println(Integer.compare(firstCounter, secondCounter));
+                    firstCounter++;
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    secondCounter++;
+                }
+            }
+        };
+       t.start();
+       t.join();
+    }
+
+    public synchronized void synchroThread() throws InterruptedException {
+        firstCounter = 0;
+        secondCounter = 0;
+        callThread();
+
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Part3 part3 = new Part3();
+        part3.thread();
+        System.out.println("------");
+        part3.synchroThread();
+    }
+}

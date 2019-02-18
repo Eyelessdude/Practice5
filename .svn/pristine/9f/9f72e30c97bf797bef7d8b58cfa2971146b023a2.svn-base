@@ -1,0 +1,37 @@
+package ua.nure.dudka.practice5;
+
+import java.util.Scanner;
+
+import static ua.nure.dudka.practice5.Part4.setMax;
+
+class RunnableImpl implements Runnable {
+    private String input;
+    private int max = 0;
+    Thread thread;
+
+    RunnableImpl(String input) {
+        this.input = input;
+        thread = new Thread(this);
+        thread.start();
+    }
+
+    @Override
+    public void run() {
+        Scanner scanner = new Scanner(input);
+        while (scanner.hasNextInt()) {
+            int number = scanner.nextInt();
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (number > max) {
+                max = number;
+            }
+        }
+
+        setMax(max);
+
+        scanner.close();
+    }
+}
